@@ -1,0 +1,526 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔒 Cybersecurity AI Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/dashboard.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-shield-alt"></i>
+                Cybersecurity AI Dashboard
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text">
+                    <i class="fas fa-circle text-success"></i> System Online
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#overview">
+                                <i class="fas fa-tachometer-alt"></i> Overview
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="nav-detection" class="nav-link" href="#detection" style="display:none;">
+                                <i class="fas fa-search"></i> Threat Detection
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#anomaly">
+                                <i class="fas fa-broadcast-tower"></i> Live Monitor
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#threats">
+                                <i class="fas fa-list"></i> Threat Management
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="#securitylogs">
+                                <i class="fas fa-scroll"></i> Security Logs
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#simulation">
+                                <i class="fas fa-chess"></i> Attack Simulation
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#analytics">
+                                <i class="fas fa-chart-bar"></i> Analytics
+                            </a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <!-- Overview Tab -->
+                <div id="overview" class="tab-content active">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Dashboard Overview</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <div class="btn-group me-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="refreshDashboard()">
+                                    <i class="fas fa-sync-alt"></i> Refresh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status Cards -->
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card bg-primary text-white mb-4">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <div class="small text-white-50">Autoencoder Status</div>
+                                            <div class="text-lg fw-bold" id="autoencoder-status">Unknown</div>
+                                        </div>
+                                        <i class="fas fa-robot fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card bg-success text-white mb-4">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <div class="small text-white-50">Avg Response Time</div>
+                                            <div class="text-lg fw-bold" id="response-time">0.15s</div>
+                                        </div>
+                                        <i class="fas fa-stopwatch fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card bg-danger text-white mb-4">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <div class="small text-white-50">Active Threats</div>
+                                            <div class="text-lg fw-bold" id="active-threats">0</div>
+                                        </div>
+                                        <button class="btn btn-sm btn-light" onclick="navigateThreats('active')">View All</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card bg-success text-white mb-4">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <div class="small text-white-50">Remediated</div>
+                                            <div class="text-lg fw-bold" id="remediated-count">0</div>
+                                        </div>
+                                        <button class="btn btn-sm btn-light" onclick="navigateThreats('remediated')">View All</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card bg-warning text-white mb-4">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <div class="small text-white-50">Total Threats</div>
+                                            <div class="text-lg fw-bold" id="threats-detected">0</div>
+                                        </div>
+                                        <button class="btn btn-sm btn-light" onclick="navigateThreats('all')">View All</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div id="system-health-card" class="card bg-info text-white mb-4">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <div class="small text-white-50">System Health</div>
+                                            <div id="system-health-text" class="text-lg fw-bold">Healthy</div>
+                                        </div>
+                                        <i class="fas fa-heart fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                </div>
+
+                <!-- Threat Detection Tab -->
+                <div id="detection" class="tab-content">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Threat Detection</h1>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-brain"></i> Deep Learning Classification</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="classification-form">
+                                        <div class="mb-3">
+                                            <label for="model-select" class="form-label">Select Model</label>
+                                            <select class="form-select" id="model-select">
+                                                <option value="mlp">MLP (Multi-Layer Perceptron)</option>
+                                                <option value="lstm">LSTM (Long Short-Term Memory)</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="features-input" class="form-label">Network Features (75 values)</label>
+                                            <textarea class="form-control" id="features-input" rows="6" 
+                                                placeholder="Enter 75 comma-separated numerical values...&#10;Example: 53.0, 31471.0, 2.0, 2.0, ..."></textarea>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <button type="button" class="btn btn-success" onclick="classifyThreat()">
+                                                <i class="fas fa-search"></i> Classify Threat
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-chart-line"></i> Classification Results</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="classification-results">
+                                        <div class="text-center text-muted">
+                                            <i class="fas fa-info-circle fa-2x mb-3"></i>
+                                            <p>Submit network features to get classification results</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Monitor Tab (formerly Anomaly Detection) -->
+                <div id="anomaly" class="tab-content">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Live Monitor</h1>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0"><i class="fas fa-broadcast-tower"></i> Live Monitor</h5>
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-2 d-none d-md-block">
+                                            <select id="monitor-mode" class="form-select form-select-sm">
+                                                <option value="system">System + Log</option>
+                                                <option value="log">Log only</option>
+                                            </select>
+                                        </div>
+                                        <button id="monitor-threats-button" class="btn btn-sm btn-danger me-2" style="display:none;" onclick="navigateThreats('active')">
+                                            <i class="fas fa-exclamation-triangle"></i> View Active Threats
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="clearMonitorLog()"><i class="fas fa-eraser"></i> Clear</button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <button id="monitor-start" class="btn btn-sm btn-primary me-2" onclick="startMonitor()">Start Monitor</button>
+                                        <button id="monitor-stop" class="btn btn-sm btn-outline-secondary me-2" onclick="stopMonitor()" disabled>Stop Monitor</button>
+                                        <div>
+                                            <small>Status: <span id="monitor-status" class="text-muted">Stopped</span></small>
+                                            &nbsp;|&nbsp;
+                                            <small>Last Event: <span id="monitor-last-event">-</span></small>
+                                            &nbsp;|&nbsp;
+                                            <small>Resolved: <span id="resolved-threats">0</span></small>
+                                        </div>
+                                    </div>
+                                    <div id="monitor-log" data-empty="true" style="max-height:300px; overflow:auto; font-family:monospace; font-size:0.9rem; background:#f8f9fa; padding:10px; border-radius:6px;">
+                                        No monitor events yet.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Threat Management Tab -->
+                <div id="threats" class="tab-content">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Threat Management</h1>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-sm-3">
+                                    <label class="form-label">Status</label>
+                                    <select id="filter-status" class="form-select">
+                                        <option value="">All</option>
+                                        <option value="active">Active</option>
+                                        <option value="remediated">Remediated</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="form-label">Severity</label>
+                                    <select id="filter-severity" class="form-select">
+                                        <option value="">All</option>
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
+                                        <option value="critical">Critical</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button class="btn btn-primary w-100" onclick="loadThreats()"><i class="fas fa-filter"></i> Apply</button>
+                                </div>
+                                <div class="col-sm-4 mt-sm-0 mt-2 d-flex gap-2">
+                                    <input id="purge-count" type="number" min="1" max="10000" value="300" class="form-control" title="Number of oldest threats to purge" />
+                                    <button class="btn btn-outline-danger" onclick="purgeOldestThreats()"><i class="fas fa-trash"></i> Purge Oldest</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0"><i class="fas fa-list"></i> Threats</h5>
+                                    <small id="threats-count" class="text-muted"></small>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Time</th>
+                                                    <th>Type</th>
+                                                    <th>Severity</th>
+                                                    <th>Status</th>
+                                                    
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="threats-table">
+                                                <tr><td colspan="5" class="text-center text-muted">No data</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-header"><h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5></div>
+                                <div class="card-body">
+                                    <button class="btn btn-outline-primary w-100 mb-2" onclick="quickNetworkScan()"><i class="fas fa-network-wired"></i> Network Scan</button>
+                                    <button class="btn btn-outline-secondary w-100" onclick="quickLogAnalysis()"><i class="fas fa-file-alt"></i> Log Analysis</button>
+                                    <hr/>
+                                    <div id="quick-actions-output" class="small text-muted"></div>
+                                </div>
+                            </div>
+                            <div class="card mt-3">
+                                <div class="card-header"><h6 class="mb-0"><i class="fas fa-history"></i> Selected Threat</h6></div>
+                                <div class="card-body">
+                                    <div id="threat-detail">Select a threat to view details</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+                <!-- Security Logs Tab -->
+                <div id="securitylogs" class="tab-content">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Security Logs</h1>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h5 class="mb-0"><i class="fas fa-scroll"></i> Recent Log Entries</h5></div>
+                        <div class="card-body">
+                            <button class="btn btn-sm btn-outline-primary mb-2" onclick="loadSecurityLogs()"><i class="fas fa-sync"></i> Refresh</button>
+                            <pre id="security-logs" style="height:300px; overflow:auto; background:#f8f9fa; padding:10px; border-radius:6px;">Loading...</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attack Simulation Tab -->
+                <div id="simulation" class="tab-content">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Attack Simulation & MITRE ATT&CK</h1>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-chess"></i> Attack Scenario Setup</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="simulation-form">
+                                        <div class="mb-3">
+                                            <label for="entry-point" class="form-label">Entry Point</label>
+                                            <select class="form-select" id="entry-point">
+                                                <option value="web_server">Web Server</option>
+                                                <option value="email_server">Email Server</option>
+                                                <option value="firewall">Firewall</option>
+                                                <option value="workstation_1">Workstation</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="attack-type" class="form-label">Attack Type</label>
+                                            <select class="form-select" id="attack-type">
+                                                <option value="DDoS">DDoS Attack</option>
+                                                <option value="PortScan">Port Scanning</option>
+                                                <option value="Web Attack - XSS">XSS Attack</option>
+                                                <option value="Bot">Botnet Activity</option>
+                                                <option value="SSH-Patator">SSH Brute Force</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="max-steps" class="form-label">Maximum Steps</label>
+                                            <input type="number" class="form-control" id="max-steps" value="5" min="1" max="10">
+                                        </div>
+                                        
+                                        <button type="button" class="btn btn-danger" onclick="simulateAttack()">
+                                            <i class="fas fa-play"></i> Simulate Attack
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-route"></i> Simulation Results</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="simulation-results">
+                                        <div class="text-center text-muted">
+                                            <i class="fas fa-play-circle fa-2x mb-3"></i>
+                                            <p>Configure attack parameters and run simulation</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+                <!-- Analytics Tab (Threat-centric) -->
+<div id="analytics" class="tab-content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Threat Analytics</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="refreshThreatAnalytics()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-primary" onclick="exportThreatAnalytics()">
+                    <i class="fas fa-download"></i> Export
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white mb-4"><div class="card-body d-flex justify-content-between"><div><div class="small text-white-50">Total Threats</div><div class="text-lg fw-bold" id="kpi-total">0</div></div><i class="fas fa-database fa-2x"></i></div></div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-danger text-white mb-4"><div class="card-body d-flex justify-content-between"><div><div class="small text-white-50">Active</div><div class="text-lg fw-bold" id="kpi-active">0</div></div><i class="fas fa-exclamation-triangle fa-2x"></i></div></div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4"><div class="card-body d-flex justify-content-between"><div><div class="small text-white-50">Remediated</div><div class="text-lg fw-bold" id="kpi-remediated">0</div></div><i class="fas fa-check-circle fa-2x"></i></div></div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-info text-white mb-4"><div class="card-body d-flex justify-content-between"><div><div class="small text-white-50">MTTR</div><div class="text-lg fw-bold" id="kpi-mttr">N/A</div></div><i class="fas fa-stopwatch fa-2x"></i></div></div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card"><div class="card-header"><h5 class="mb-0"><i class="fas fa-chart-pie"></i> Status</h5></div><div class="card-body"><canvas id="chart-status" height="220"></canvas></div></div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card"><div class="card-header"><h5 class="mb-0"><i class="fas fa-signal"></i> Severity</h5></div><div class="card-body"><canvas id="chart-severity" height="220"></canvas></div></div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card"><div class="card-header"><h5 class="mb-0"><i class="fas fa-chart-line"></i> Trend</h5></div><div class="card-body"><canvas id="chart-trend" height="220"></canvas></div></div>
+        </div>
+    </div>
+
+    <!-- Recent threats -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header"><h5 class="mb-0"><i class="fas fa-list"></i> Recent Threats</h5></div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-sm">
+                            <thead><tr><th>Time</th><th>Type</th><th>Severity</th><th>Status</th></tr></thead>
+                            <tbody id="analytics-recent-body"><tr><td colspan="4" class="text-center text-muted">Loading...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Loading Modal -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Processing...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/dashboard.js?v=20251119-2"></script>
+</body>
+</html>

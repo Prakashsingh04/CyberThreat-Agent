@@ -1,0 +1,62 @@
+# --- Python artifacts ---
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+
+# Virtual environments
+venv/
+.env/
+.env.*
+
+# Jupyter / IPython
+.ipynb_checkpoints/
+
+# Logs & runtime output
+logs/
+*.log
+
+# IDE/editor
+.vscode/
+*.code-workspace
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Data & generated artifacts
+data/processed/
+!data/README.md
+
+# Model binaries (optionally track via Git LFS or releases)
+models/*.h5
+models/*.pkl
+
+# Node / frontend (if added later)
+node_modules/
+
+# Build / packaging
+build/
+dist/
+
+# Coverage / test
+.coverage
+htmlcov/
+pytest_cache/
+
+# Security
+*.pem
+*.key
+*.crt
+
+# Temporary
+.tmp/
+*.tmp
+
+# Cache
+.cache/
+
+ 
