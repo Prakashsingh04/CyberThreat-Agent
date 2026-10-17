@@ -1,32 +1,43 @@
- 
 # Data Directory
 
-Contains the datasets used in the project.
+Contains datasets and the runtime threat store used by the Cybersecurity AI Detection System.
 
-- `raw/`: Original downloaded datasets (e.g., CICIDS2017 CSV files).
-- `processed/`: Cleaned and feature-engineered datasets ready for model training or inference.
-- `mitre_mappings.json`: Mapping of attack classes to MITRE ATT&CK framework techniques.
+## Layout
 
-## Threat Store Maintenance
+```
+data/
+├── raw/                  # Original downloaded datasets (e.g., CICIDS2017 CSVs) — gitignored
+├── processed/            # Cleaned, feature-engineered data — gitignored
+│   └── threats.json      # Runtime threat store (created/maintained by the app)
+└── mitre_mappings.json   # Attack-class → MITRE ATT&CK technique mapping (optional)
+```
 
-Runtime threat records are persisted to `processed/threats.json`.
-Administrative cleanup endpoints:
+> ⚠️ `data/processed/` is gitignored. Only `data/README.md` is tracked. The runtime file `processed/threats.json` is created and managed by the application at runtime.
 
-- Purge ALL threats: `POST /api/v1/admin/purge` body `{ "confirm": true }`
-- Purge OLDEST N threats (e.g. bottom 300): `POST /api/v1/admin/purge-oldest` body `{ "count": 300, "confirm": true }`
-- Clear logs (`monitor.log`, `feedback.jsonl`): `POST /api/v1/admin/clear-logs` body `{ "confirm": true }`
+## Threat store maintenance
 
-### PowerShell Examples
+Threat records are persisted to `data/processed/threats.json`. Administrative cleanup endpoints (require `confirm=true`):
+
+| Endpoint | Body | Description |
+|----------|------|-------------|
+| `POST /api/v1/admin/purge` | `{ "confirm": true }` | Delete all threat records |
+| `POST /api/v1/admin/purge-oldest` | `{ "count": 300, "confirm": true }` | Remove the oldest N threat records |
+| `POST /api/v1/admin/clear-logs` | `{ "confirm": true }` | Clear `logs/monitor.log` and `logs/feedback.jsonl` |
+
+### PowerShell examples
 
 ```powershell
 # Remove oldest 300 threat records
-Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/api/v1/admin/purge-oldest -Body (@{count=300;confirm=$true} | ConvertTo-Json) -ContentType 'application/json'
+Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/api/v1/admin/purge-oldest `
+  -Body (@{count=300;confirm=$true} | ConvertTo-Json) -ContentType 'application/json'
 
 # Remove all threat records
-Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/api/v1/admin/purge -Body (@{confirm=$true} | ConvertTo-Json) -ContentType 'application/json'
+Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/api/v1/admin/purge `
+  -Body (@{confirm=$true} | ConvertTo-Json) -ContentType 'application/json'
 
 # Clear monitor + feedback logs
-Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/api/v1/admin/clear-logs -Body (@{confirm=$true} | ConvertTo-Json) -ContentType 'application/json'
+Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/api/v1/admin/clear-logs `
+  -Body (@{confirm=$true} | ConvertTo-Json) -ContentType 'application/json'
 ```
 
 All endpoints require `confirm=true` to prevent accidental mass deletion.

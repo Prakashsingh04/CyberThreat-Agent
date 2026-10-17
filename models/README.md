@@ -1,22 +1,38 @@
-
 # Models Directory
 
-This directory contains all trained models and associated preprocessing objects.
+This directory contains trained models and associated preprocessing objects used by the Cybersecurity AI Detection System.
 
-## Models
+> ⚠️ **Model binaries are not tracked in Git.** Per `.gitignore`, `models/*.h5` and `models/*.pkl` are excluded from version control. You must supply your own trained files here before running detection/anomaly endpoints.
 
-- `mlp_model.h5`: Multi-Layer Perceptron (MLP) Keras model for multi-class classification.
-- `lstm_model.h5`: Long Short-Term Memory (LSTM) Keras model (if available).
-- `autoencoder_model.h5`: Keras autoencoder model for anomaly detection.
-- `isolation_forest.pkl`: Isolation Forest scikit-learn model for anomaly detection.
+## Expected files
 
-## Preprocessing Objects
+| File | Purpose | Required for |
+|------|---------|--------------|
+| `autoencoder_model.h5` | Keras autoencoder — anomaly detection (BENIGN vs ATTACK) | Anomaly/pipeline endpoints |
+| `isolation_forest.pkl` | scikit-learn Isolation Forest — anomaly detection | Anomaly endpoints |
+| `mlp_model.h5` | Multi-Layer Perceptron — multi-class classification | Classification endpoints |
+| `lstm_model.h5` | LSTM — sequential classification | Classification endpoints |
+| `scaler.pkl` | StandardScaler — feature normalization | All model endpoints |
+| `label_encoder.pkl` | LabelEncoder — class name ↔ label conversion | All model endpoints |
 
-- `scaler.pkl`: StandardScaler used for feature scaling.
-- `label_encoder.pkl`: LabelEncoder for class label conversions.
+Minimum set to run the anomaly-detection pipeline: `autoencoder_model.h5`, `scaler.pkl`, `label_encoder.pkl`.
 
-## Data
+Without these files, anomaly endpoints return `503 Service Unavailable` and the dashboard reports the models as offline.
 
-- Train/test split feature and label files (scaled and unscaled).
+## How to add models
 
-Please ensure these models and files are present before running the API.
+1. Train or obtain your model files (see `notebooks/` for training exploration, if present).
+2. Place them in this directory:
+   ```
+   models/
+   ├── autoencoder_model.h5
+   ├── scaler.pkl
+   └── label_encoder.pkl
+   ```
+3. Restart the application (`python main.py`). Startup logs will report how many model files were found.
+
+## Related
+
+- `config/settings.py` — runtime configuration and safe-mode toggles
+- `agents/model_manager.py` — centralized model loading and caching
+- `api/utils.py` — `check_model_files()` helper used at startup and in health endpoints
